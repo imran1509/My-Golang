@@ -21,4 +21,5 @@ use (
 	./18files
 	./19WebRequests
 	./20urls
+	./21webreqverb
 )
