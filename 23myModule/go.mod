@@ -1,4 +1,4 @@
-module mymaps
+module github.com/imran1509/mymodules
 
 go 1.20
 
