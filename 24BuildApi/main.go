@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -36,7 +37,23 @@ func (c *Course) IsEmpty() bool {
 }
 
 func main() {
+	fmt.Println("API - learncodeonline.in")
+	r := mux.NewRouter()
 
+	//Seeding
+	courses = append(courses, Course{CourseID: "2", CourseName: "ReactJS", CoursePrice: 299, Author: &Author{FullName: "Hitesh Chaudhary", Website: "lco.dev"}})
+	courses = append(courses, Course{CourseID: "2", CourseName: "Golang", CoursePrice: 199, Author: &Author{FullName: "Hitesh Chaudhary", Website: "go.dev"}})
+
+	//routing
+	r.HandleFunc("/", serveHome).Methods("GET")
+	r.HandleFunc("/courses", getAllcourses).Methods("GET")
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET")
+	r.HandleFunc("/course", createOneCourse).Methods("POST")
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
+
+	//listen to a port
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
 
 //controllers - separate file
@@ -56,11 +73,11 @@ func getOneCourse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 
 	//grab id from request
-	params := mux.Vars(r)w.Header().Set("content-type", "application/json")
+	params := mux.Vars(r)
 
 	//loop through courses, find matching id and return the response
 	for _, course := range courses {
-		if course.CourseID == params["ID"] {
+		if course.CourseID == params["id"] {
 			json.NewEncoder(w).Encode(course)
 			return
 		}
@@ -80,10 +97,10 @@ func createOneCourse(w http.ResponseWriter, r *http.Request) {
 
 	//what about - {}
 	var course Course
-	_ = json.NewEncoder(r.Body).Decode(&course)
+	_ = json.NewDecoder(r.Body).Decode(&course)
 	if course.IsEmpty() {
 		json.NewEncoder(w).Encode("No data inside JSON")
-		return 
+		return
 	}
 	//generate unique id, convert it into strings
 	//append course into courses
@@ -105,15 +122,28 @@ func updateOneCourse(w http.ResponseWriter, r *http.Request) {
 	//loop, id, remove, add with my ID
 	for index, course := range courses {
 		if course.CourseID == params["id"] {
-			courses = append(courses[:index], course[index+1:]... )
+			courses = append(courses[:index], courses[index+1:]...)
 			var course Course
 			_ = json.NewDecoder(r.Body).Decode(&course)
 			course.CourseID = params["id"]
 			courses = append(courses, course)
 			json.NewEncoder(w).Encode(course)
-			return 
+			return
 		}
 	}
+}
 
+func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("delete one course")
+	w.Header().Set("content-type", "application/json")
 
+	params := mux.Vars(r)
+
+	//loop, id, remove (index, index+1)
+	for index, course := range courses {
+		if course.CourseID == params["id"] {
+			courses = append(courses[:index], courses[index+1:]...)
+			break
+		}
+	}
 }

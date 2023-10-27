@@ -23,4 +23,5 @@ use (
 	./20urls
 	./21webreqverb
 	./22bitmorejson
+	./24BuildApi
 )
