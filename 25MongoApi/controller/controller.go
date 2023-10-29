@@ -2,8 +2,10 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/imran1509/MongoApi/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -41,7 +43,7 @@ func init() {
 	fmt.Println("colection instance is ready")
 }
 
-//MONGODB helpers
+//MONGODB helpers - separate file
 
 // insert 1 record
 func insertOne(movie model.Netflix) {
@@ -106,4 +108,11 @@ func getAllMovies() []primitive.M {
 	}
 	defer cursor.Close(context.Background())
 	return movies
+}
+
+// Actual controllers - separate file
+func GetMyAllMovies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	allMovies := getAllMovies()
+	json.NewEncoder(w).Encode(allMovies)
 }
