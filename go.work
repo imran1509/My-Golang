@@ -24,4 +24,5 @@ use (
 	./21webreqverb
 	./22bitmorejson
 	./24BuildApi
+	./25MongoApi
 )
