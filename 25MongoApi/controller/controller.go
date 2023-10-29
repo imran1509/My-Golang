@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/imran1509/MongoApi/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -46,7 +47,7 @@ func init() {
 //MONGODB helpers - separate file
 
 // insert 1 record
-func insertOne(movie model.Netflix) {
+func insertOneMovie(movie model.Netflix) {
 	inserted, err := collection.InsertOne(context.Background(), movie)
 
 	if err != nil {
@@ -115,4 +116,23 @@ func GetMyAllMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
 	allMovies := getAllMovies()
 	json.NewEncoder(w).Encode(allMovies)
+}
+
+func CreateMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+
+	var movie model.Netflix
+	_ = json.NewDecoder(r.Body).Decode(&movie)
+	insertOneMovie(movie)
+}
+
+func MarkasWatched(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+
+	params := mux.Vars(r)
+	updateOnemovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
+
 }
