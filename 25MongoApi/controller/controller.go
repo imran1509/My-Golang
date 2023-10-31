@@ -13,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/x/mongo/driver/mongocrypt/options"
 )
 
 const connectionString = "mongodb+srv://Imran:Imransaifi@imran-cluster.t9n1eaw.mongodb.net/?retryWrites=true&w=majority"
@@ -92,7 +91,7 @@ func deleteAllMovie() int64 {
 
 // get all movies from database
 func getAllMovies() []primitive.M {
-	cursor, err := collection.Find(context.Background(), bson.M{{}})
+	cursor, err := collection.Find(context.Background(), bson.D{{}})
 	if err != nil {
 		log.Fatal(err)
 	}
