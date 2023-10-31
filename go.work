@@ -25,4 +25,5 @@ use (
 	./22bitmorejson
 	./24BuildApi
 	./25MongoApi
+	./26Goroutines
 )
